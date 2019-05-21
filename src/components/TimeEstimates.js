@@ -44,11 +44,11 @@ class TimeEstimates extends React.Component {
         const addOns = [
             {
                 label: 'Testing',
-                percent: 15
+                factor: 1.15
             },
             {
                 label: 'Project Management',
-                percent: 20
+                factor: 1.20
             }
         ];
 

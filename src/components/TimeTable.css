@@ -3,3 +3,12 @@
     position: absolute;
     right: 30px;
 }
+
+.TimeTable .TotalsRow {
+    background-color: #fdfdfd;
+}
+
+.TimeTable .TotalsRow td {
+    padding-bottom: 20px;
+    padding-top: 20px;
+}

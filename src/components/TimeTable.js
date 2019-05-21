@@ -17,7 +17,10 @@ export default class TimeTable extends React.Component {
         super(props);
         this.removeRow = this.removeRow.bind(this);
         this.onRowUpdate = this.onRowUpdate.bind(this);
-        this.calculateRowsAverage = this.calculateRowsAverage.bind(this);
+        this.getTaskAverage = this.getTaskAverage.bind(this);
+        this.calculateTaskAddons = this.calculateTaskAddons.bind(this);
+        this.calculateTaskTotal = this.calculateTaskTotal.bind(this);
+        this.calculateTotalForAddOn = this.calculateTotalForAddOn.bind(this);
     }
 
     removeRow(index) {
@@ -28,21 +31,54 @@ export default class TimeTable extends React.Component {
         this.props.onUpdate(index, name, value);
     }
 
-    calculateRowsAverage() {
-        const {tasks} = this.props;
-        let total = 0;
+    getTaskAverage(task) {
+        return Math.round((Number(task.bestCase) + Number(task.probableCase) + Number(task.worstCase)) / 3)
+    }
 
-        tasks.map((row) => {
-            total += Math.round((Number(row.bestCase) + Number(row.probableCase) + Number(row.worstCase)) / 3);
+    calculateTaskAddons(task) {
+
+        const average = this.getTaskAverage(task);
+        return this.props.addOns.map(addOn => {
+            return ((average/100)*(addOn.factor*100-100)).toFixed((2));
         });
+    }
 
-        return total;
+    calculateTaskTotal(task) {
+
+        const average = this.getTaskAverage(task);
+
+        return Math.round(this.props.addOns.map((addOn) => {
+            return (average/100)*(addOn.factor*100-100);
+        }).reduce((a, b) => a + b, 0) + average);
+    }
+
+    calculateAllTasksTotal(tasks) {
+
+        return tasks.map(task => {
+
+            const average = this.getTaskAverage(task);
+
+            return Math.round(this.props.addOns.map((addOn) => {
+                return (average/100)*(addOn.factor*100-100);
+            }).reduce((a, b) => a + b, 0) + average);
+
+        }).reduce((a, b) => a + b, 0);
+
+    }
+
+    calculateTotalForAddOn(addOn) {
+
+        const tasks = this.props.tasks;
+
+        return tasks.map(task => {
+            const average = this.getTaskAverage(task);
+            return (average/100)*(addOn.factor*100-100);
+        }).reduce((a, b) => a + b, 0).toFixed(2);
     }
 
     render() {
 
         const {tasks, addOns} = this.props;
-        const averageTotal = this.calculateRowsAverage();
 
         return (
             <div className="TimeTable">
@@ -55,8 +91,17 @@ export default class TimeTable extends React.Component {
                                 <TableCell>Best case (h)</TableCell>
                                 <TableCell>Probable (h)</TableCell>
                                 <TableCell>Worst case (h)</TableCell>
+                                {addOns.map(addOn => {
+                                    return (
+                                        <TableCell key={addOn.label}>
+                                            <Tooltip title={(addOn.factor*100-100).toFixed(2) + '%'}>
+                                                <span>{`${addOn.label} (h)`}</span>
+                                            </Tooltip>
+                                        </TableCell>
+                                    );
+                                })}
                                 <TableCell align="right">
-                                    <Tooltip title="Average of best, worst and probable case." placement="top-end">
+                                    <Tooltip title="Average of best, worst and probable case.">
                                         <span>Estimate (h)</span>
                                     </Tooltip>
                                 </TableCell>
@@ -77,15 +122,24 @@ export default class TimeTable extends React.Component {
                                         onUpdate={(name, value) => {
                                             this.onRowUpdate(i, name, value)
                                         }}
+                                        addOns={this.calculateTaskAddons(task)}
+                                        total={this.calculateTaskTotal(task)}
                                     />
                                 );
                             })}
-                            <TableRow>
-                                <TableCell align="right" colSpan={6}>
-                                    <strong>{averageTotal}</strong>
-                                </TableCell>
-                                <TableCell align="right" padding="dense">
-                                </TableCell>
+                            {addOns.map(addOn => {
+                                return(
+                                    <TableRow className={'TotalsRow'}>
+                                        <TableCell colSpan={6} align="right"><strong>Total {addOn.label}</strong></TableCell>
+                                        <TableCell colSpan={2} align="right"><strong>{this.calculateTotalForAddOn(addOn)}</strong></TableCell>
+                                        <TableCell colSpan={1}/>
+                                    </TableRow>
+                                );
+                            })}
+                            <TableRow className={'TotalsRow'}>
+                                <TableCell colSpan={6} align="right"><strong>Total estimate</strong></TableCell>
+                                <TableCell colSpan={2} align="right"><strong>{this.calculateAllTasksTotal(tasks)}</strong></TableCell>
+                                <TableCell colSpan={1}/>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -93,7 +147,6 @@ export default class TimeTable extends React.Component {
                 <Fab className="addRow" size="small" color="primary" aria-label="Add" onClick={this.props.addTask}>
                     <AddIcon/>
                 </Fab>
-                <pre>{JSON.stringify(addOns, null, 4)}</pre>
             </div>
         );
     }

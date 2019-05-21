@@ -25,6 +25,12 @@ export default class TimeTableRow extends React.Component {
         this.props.onUpdate(name, event.target.value);
     };
 
+    total(average, addOns) {
+        return Math.round(addOns.map((addOn) => {
+            return (average/100)*(addOn.factor*100-100);
+        }).reduce((a, b) => a + b, 0) + average);
+    }
+
     render() {
 
         const {
@@ -33,10 +39,10 @@ export default class TimeTableRow extends React.Component {
             bestCase,
             probableCase,
             worstCase,
-            onDelete
+            onDelete,
+            addOns,
+            total
         } = this.props;
-
-        const average = Math.round((Number(bestCase) + Number(probableCase) + Number(worstCase)) / 3);
 
         return (
             <TableRow>
@@ -93,8 +99,15 @@ export default class TimeTableRow extends React.Component {
                         onChange={this.onChangeData('worstCase')}
                     />
                 </TableCell>
+                {addOns.map(addOn => {
+                    return (
+                        <TableCell align="right" key={addOn.label}>
+                            <strong>{addOn}</strong>
+                        </TableCell>
+                    );
+                })}
                 <TableCell align="right">
-                    <strong>{average}</strong>
+                    <strong>{total}</strong>
                 </TableCell>
                 <TableCell>
                     <IconButton
