@@ -1,4 +1,3 @@
-import './TimeTable.css';
 import React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,8 +9,18 @@ import TimeTableRow from './TimeTableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Fab from '@material-ui/core/Fab';
 import Paper from '@material-ui/core/Paper';
+import SettingsIcon from "@material-ui/icons/Settings";
+import IconButton from '@material-ui/core/IconButton';
+import PropTypes from "prop-types";
+import {withStyles} from "@material-ui/core";
 
-export default class TimeTable extends React.Component {
+const styles = theme => ({
+    addTaskButton: {
+
+    },
+});
+
+class TimeTable extends React.Component {
 
     constructor(props) {
         super(props);
@@ -78,7 +87,7 @@ export default class TimeTable extends React.Component {
 
     render() {
 
-        const {tasks, addOns} = this.props;
+        const {tasks, addOns, classes} = this.props;
 
         return (
             <div className="TimeTable">
@@ -105,7 +114,14 @@ export default class TimeTable extends React.Component {
                                         <span>Estimate (h)</span>
                                     </Tooltip>
                                 </TableCell>
-                                <TableCell></TableCell>
+                                <TableCell>
+                                    <IconButton
+                                        aria-label="Settings"
+                                        onClick={this.props.onToggleSettings}
+                                    >
+                                        <SettingsIcon/>
+                                    </IconButton>
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -127,28 +143,45 @@ export default class TimeTable extends React.Component {
                                     />
                                 );
                             })}
-                            {addOns.map(addOn => {
+                            <TableRow>
+                                <TableCell colSpan={9} align="right">
+                                    <Fab className={classes.addTaskButton} size="small" color="primary" aria-label="Add" onClick={this.props.addTask}>
+                                        <AddIcon fontSize="small"/>
+                                    </Fab>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell colSpan={8} align="right">Total (h)</TableCell>
+                                <TableCell colSpan={1}></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {addOns.map((addOn, index) => {
                                 return(
-                                    <TableRow className={'TotalsRow'}>
-                                        <TableCell colSpan={6} align="right"><strong>Total {addOn.label}</strong></TableCell>
-                                        <TableCell colSpan={2} align="right"><strong>{this.calculateTotalForAddOn(addOn)}</strong></TableCell>
+                                    <TableRow className={'TotalsRow'} key={index}>
+                                        <TableCell colSpan={6} align="right">{`${addOn.label} (${(addOn.factor*100-100).toFixed(2)}%)`}</TableCell>
+                                        <TableCell colSpan={2} align="right">{this.calculateTotalForAddOn(addOn)}</TableCell>
                                         <TableCell colSpan={1}/>
                                     </TableRow>
                                 );
                             })}
                             <TableRow className={'TotalsRow'}>
-                                <TableCell colSpan={6} align="right"><strong>Total estimate</strong></TableCell>
-                                <TableCell colSpan={2} align="right"><strong>{this.calculateAllTasksTotal(tasks)}</strong></TableCell>
+                                <TableCell colSpan={6} align="right">Estimate</TableCell>
+                                <TableCell colSpan={2} align="right">{this.calculateAllTasksTotal(tasks)}</TableCell>
                                 <TableCell colSpan={1}/>
                             </TableRow>
                         </TableBody>
                     </Table>
                 </Paper>
-                <Fab className="addRow" size="small" color="primary" aria-label="Add" onClick={this.props.addTask}>
-                    <AddIcon/>
-                </Fab>
             </div>
         );
     }
-
 }
+
+TimeTable.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(TimeTable);

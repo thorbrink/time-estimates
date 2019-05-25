@@ -1,19 +1,35 @@
 import 'typeface-roboto';
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import './App.css';
 import TimeEstimates from './components/TimeEstimates';
+import {withStyles} from "@material-ui/core";
+import PropTypes from "prop-types";
 
+const styles = theme => ({
+    app: {
+    }
+});
 
-function App() {
-    return (
-        <div className="App">
-            <Typography component="h1" variant="h2" gutterBottom>
-                Time Estimates
-            </Typography>
-            <TimeEstimates/>
-        </div>
-    );
+class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+
+        const {classes} = this.props;
+
+        return (
+            <div className={classes.app}>
+                <TimeEstimates/>
+            </div>
+        );
+    }
 }
 
-export default App;
+App.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(App);
