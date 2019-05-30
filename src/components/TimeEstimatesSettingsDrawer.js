@@ -104,6 +104,7 @@ class TimeEstimatesSettingsDrawer extends React.Component {
 
 TimeEstimatesSettingsDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
+    addOns: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(TimeEstimatesSettingsDrawer);

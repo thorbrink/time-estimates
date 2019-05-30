@@ -182,6 +182,8 @@ class TimeTable extends React.Component {
 
 TimeTable.propTypes = {
     classes: PropTypes.object.isRequired,
+    tasks: PropTypes.array.isRequired,
+    addOns: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(TimeTable);

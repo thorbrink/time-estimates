@@ -15,7 +15,7 @@ afterEach(() => {
     container = null;
 });
 
-it('renders TimeTableRow', () => {
+it('renders TimeTableRow and outputs correct values', () => {
     // Test first render and componentDidMount
     act(() => {
         ReactDOM.render(
