@@ -1,0 +1,23 @@
+env:
+    - ACF_PRO_KEY=b3JkZXJfaWQ9NTk4OTV8dHlwZT1kZXZlbG9wZXJ8ZGF0ZT0yMDE1LTA3LTEzIDE0OjM0OjAw
+
+sudo: false
+language: php
+php:
+  - 7.0
+
+cache:
+  apt: true
+  directories:
+    - $HOME/.composer/cache
+    - vendor
+
+before_install:
+  - phpenv config-rm xdebug.ini || true
+  - composer self-update
+
+install:
+  - composer install -o --prefer-dist --no-interaction
+
+script:
+  - composer test-wp-standards

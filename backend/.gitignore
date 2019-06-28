@@ -1,0 +1,30 @@
+web/app/plugins/*
+web/app/upgrade/*
+web/app/uploads/*
+web/app/mu-plugins/*
+web/app/themes/*
+
+!web/app/plugins/.gitkeep
+!web/app/upgrade/.gitkeep
+!web/app/uploads/.gitkeep
+!web/app/mu-plugins/.gitkeep
+!web/app/themes/.gitkeep
+
+# WordPress
+web/wp
+web/.htaccess
+
+# Mu-plugins
+!web/app/mu-plugins/dev-mailhog-smtp.php
+
+# Dotenv
+.env
+.env.*
+!.env.example
+
+# Composer
+vendor
+!vendor/.gitkeep
+
+# IDE Settings
+.idea

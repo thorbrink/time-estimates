@@ -1,0 +1,33 @@
+version: "3.1"
+
+services:
+  backend_db:
+    container_name: backend_db
+    image: mysql:5.7.25
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=wp
+      - MYSQL_USER=wp
+      - MYSQL_PASSWORD=root
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker_conf/mysqlconf:/etc/mysql/mysql.conf.d
+  backend_web:
+    container_name: backend_web
+    image: resultify/wp-php-7.2-apache:1.0
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/web
+    ports:
+      - 80:80
+    depends_on:
+      - backend_db
+      - backend-mailhog
+    volumes:
+      - .:/var/www/html:cached
+
+  backend-mailhog:
+    container_name: backend-mailhog
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
